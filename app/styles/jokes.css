@@ -60,6 +60,12 @@
   max-width: 12rem;
 }
 
+.jokes-list > a {
+  display: inline-block;
+  margin-bottom: 0.8rem;
+  text-transform: capitalize;
+}
+
 .jokes-list a.button:last-of-type {
   display: inline-block;
   margin-top: 1.6rem;
