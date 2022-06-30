@@ -70,7 +70,7 @@
 }
 
 .jokes-list li:not(:last-child) {
-  margin-bottom: .8rem;
+  margin-bottom: .2rem;
 }
 
 .jokes-list ul {
