@@ -43,9 +43,9 @@ function Document({ children }: { children: ReactNode }) {
       </head>
       <body>
         {children}
+        <LiveReload />
         <ScrollRestoration />
         {/* <Scripts /> */}
-        <LiveReload />
       </body>
     </html>
   );
