@@ -4,7 +4,7 @@ import { Link, useActionData, useSearchParams } from '@remix-run/react';
 import invariant from 'tiny-invariant';
 import loginStylesUrl from '~/styles/login.css';
 import { db } from '~/utils/db.server';
-import { createUserSession, login } from '~/utils/session.server';
+import { createUserSession, login, register } from '~/utils/session.server';
 
 export const links: LinksFunction = () => {
   return [{ rel: 'stylesheet', href: loginStylesUrl }];
@@ -124,11 +124,17 @@ export const action: ActionFunction = async ({ request }) => {
       }
 
       // create the user
+      const createdUser = await register(username, password);
+
+      if (!createdUser) {
+        return badRequest({
+          fields,
+          formError: `Something went wrong trying to create a new user.`,
+        });
+      }
+
       // create their session and redirect to /jokes
-      return badRequest({
-        fields,
-        formError: 'Not implemented',
-      });
+      return createUserSession(createdUser.id, redirectTo);
     }
 
     default: {

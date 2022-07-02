@@ -23,6 +23,20 @@ export const login = async (username: string, password: string) => {
   return { id: user.id, username };
 };
 
+export const register = async (username: string, password: string) => {
+  const passwordHash = await bcrypt.hash(password, 12);
+
+  const createdUser = await db.user.create({
+    data: {
+      username,
+      passwordHash,
+    },
+  });
+
+  //
+  return { id: createdUser.id, username };
+};
+
 //// CREATE COOKIE SESSION
 const sessionSecret = env.SESSION_SECRET;
 if (!sessionSecret) {
