@@ -1,9 +1,10 @@
 import type { ActionFunction, LinksFunction } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { Link, useActionData, useSearchParams } from '@remix-run/react';
-import { invariant } from 'react-router/lib/router';
+import invariant from 'tiny-invariant';
 import loginStylesUrl from '~/styles/login.css';
 import { db } from '~/utils/db.server';
+import { login } from '~/utils/session.server';
 
 export const links: LinksFunction = () => {
   return [{ rel: 'stylesheet', href: loginStylesUrl }];
@@ -35,7 +36,7 @@ function validateNameMinLen(username: unknown) {
 }
 
 function validateUrl(url: any) {
-  console.log(url);
+  console.log({ url });
   let urls = ['/jokes', '/', 'http://localhost:3000'];
   if (urls.includes(url)) {
     return url;
@@ -43,8 +44,8 @@ function validateUrl(url: any) {
   return '/jokes';
 }
 
-const badRequest = (data: ActionData) => {
-  return json(data, { status: 422 });
+const badRequest = (data: ActionData, statusCode: number = 422) => {
+  return json(data, { status: statusCode });
 };
 
 export const action: ActionFunction = async ({ request }) => {
@@ -53,17 +54,28 @@ export const action: ActionFunction = async ({ request }) => {
   const username: string | null = body.get('username') as string | null;
   const password: string | null = body.get('password') as string | null;
   const loginType: string | null = body.get('loginType') as string | null;
+  const redirectTo = validateUrl(body.get('redirectTo') || '/jokes');
 
   invariant(username, 'Form not submitted correctly.');
   invariant(password, 'Form not submitted correctly.');
   invariant(loginType, 'Form not submitted correctly.');
+
+  if (
+    typeof loginType !== 'string' ||
+    typeof username !== 'string' ||
+    typeof password !== 'string' ||
+    typeof redirectTo !== 'string'
+  ) {
+    return badRequest({
+      formError: `Form not submitted correctly.`,
+    });
+  }
 
   /// Other validations
   const fields = { username, password, loginType };
   const fieldMinLenErrors = {
     username: validateNameMinLen(username),
     password: validatePasswordMinLen(password),
-    loginType: validateUrl(loginType),
   };
 
   if (Object.values(fieldMinLenErrors).some(Boolean)) {
@@ -77,7 +89,16 @@ export const action: ActionFunction = async ({ request }) => {
   switch (loginType) {
     case 'login': {
       // login to get the user
+      const tryLogin = await login(username, password);
+
       // if there's no user, return the fields and a formError
+      if (!tryLogin) {
+        return badRequest(
+          { fields, formError: 'Username/Password combination is incorrect' },
+          400
+        );
+      }
+
       // if there is a user, create their session and redirect to /jokes
       return badRequest({
         fields,
@@ -184,6 +205,7 @@ export default function LoginRoute() {
             <input
               id="password-input"
               name="password"
+              defaultValue={actionData?.fields?.password}
               type="password"
               aria-invalid={
                 Boolean(actionData?.fieldErrors?.password) || undefined
