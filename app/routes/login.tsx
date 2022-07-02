@@ -37,7 +37,7 @@ function validateNameMinLen(username: unknown) {
 
 function validateUrl(url: any) {
   console.log({ url });
-  let urls = ['/jokes', '/', 'http://localhost:3000'];
+  let urls = ['/jokes', '/', 'http://localhost:3000', '/jokes/new'];
   if (urls.includes(url)) {
     return url;
   }
@@ -55,6 +55,9 @@ export const action: ActionFunction = async ({ request }) => {
   const password: string | null = body.get('password') as string | null;
   const loginType: string | null = body.get('loginType') as string | null;
   const redirectTo = validateUrl(body.get('redirectTo') || '/jokes');
+
+  console.log({ redirectTo });
+  console.log({ redirectTo: body.get('redirectTo') });
 
   invariant(username, 'Form not submitted correctly.');
   invariant(password, 'Form not submitted correctly.');
@@ -140,6 +143,7 @@ export const action: ActionFunction = async ({ request }) => {
 export default function LoginRoute() {
   const actionData = useActionData<ActionData>();
   const [searchParams] = useSearchParams();
+
   return (
     <div className="container">
       <div className="content" data-light="">

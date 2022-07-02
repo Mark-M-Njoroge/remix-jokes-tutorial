@@ -3,6 +3,7 @@ import { json, redirect } from '@remix-run/node';
 import { useActionData } from '@remix-run/react';
 import invariant from 'tiny-invariant';
 import { db } from '~/utils/db.server';
+import { requireUserId } from '~/utils/session.server';
 
 interface ActionData {
   formError?: string;
@@ -45,6 +46,8 @@ const badRequest = (data: ActionData) => {
 };
 
 export const action: ActionFunction = async ({ request }) => {
+  const userId = await requireUserId(request);
+
   const body = await request.formData();
 
   const jokeName: string | null = body.get('name') as string | null;
@@ -93,9 +96,11 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   /// Save to the database the joke
+
   const data = {
     name: jokeName,
     content: jokeContent,
+    jokesterId: userId,
   };
 
   const joke = await db.joke.create({
