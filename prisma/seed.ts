@@ -1,5 +1,6 @@
-import { PrismaClient } from '@prisma/client';
-const db = new PrismaClient();
+import { db } from '~/utils/db.server';
+// import { PrismaClient } from '@prisma/client';
+// const db = new PrismaClient();
 
 async function seed() {
   await Promise.all(
