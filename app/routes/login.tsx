@@ -4,7 +4,7 @@ import { Link, useActionData, useSearchParams } from '@remix-run/react';
 import invariant from 'tiny-invariant';
 import loginStylesUrl from '~/styles/login.css';
 import { db } from '~/utils/db.server';
-import { login } from '~/utils/session.server';
+import { createUserSession, login } from '~/utils/session.server';
 
 export const links: LinksFunction = () => {
   return [{ rel: 'stylesheet', href: loginStylesUrl }];
@@ -98,12 +98,15 @@ export const action: ActionFunction = async ({ request }) => {
           400
         );
       }
+      const user = tryLogin;
+
+      return createUserSession(user.id, redirectTo);
 
       // if there is a user, create their session and redirect to /jokes
-      return badRequest({
-        fields,
-        formError: 'Not implemented',
-      });
+      // return badRequest({
+      //   fields,
+      //   formError: 'Not implemented',
+      // });
     }
 
     case 'register': {
