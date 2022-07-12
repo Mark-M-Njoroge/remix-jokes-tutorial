@@ -4,7 +4,7 @@ import { redirect } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { Link, useCatch, useLoaderData, useParams } from '@remix-run/react';
 import { db } from '~/utils/db.server';
-import { requireUserId } from '~/utils/session.server';
+import { getUserId, requireUserId } from '~/utils/session.server';
 
 export const action: ActionFunction = async ({ request, params }) => {
   const form = await request.formData();
@@ -39,11 +39,11 @@ export const action: ActionFunction = async ({ request, params }) => {
 
 type LoaderData = {
   joke: Joke | null;
-  user?: string;
+  isOwner?: boolean;
 };
 
 export const loader: LoaderFunction = async ({ params, request }) => {
-  const userId = await requireUserId(request);
+  const userId = await getUserId(request);
 
   const foundJoke: LoaderData = {
     joke: await db.joke.findUnique({ where: { id: params.jokeId } }),
@@ -55,23 +55,21 @@ export const loader: LoaderFunction = async ({ params, request }) => {
 
   const data = {
     ...foundJoke,
-    user: userId,
+    isOwner: !!userId && !!foundJoke.joke.jokesterId,
   };
-
-  console.log(data);
 
   return json(data);
 };
 
 export default function JokeRoute() {
-  const { joke, user } = useLoaderData<LoaderData>();
+  const { joke, isOwner } = useLoaderData<LoaderData>();
 
   return (
     <div>
       <h3>Here's your hilarious joke:</h3>
       <p>{joke!.content}</p>
       <Link to=".">"{joke!.name}" Permalink</Link>
-      {user && user === joke?.jokesterId && (
+      {isOwner && (
         <form method="post" className="delete-form">
           <input type="hidden" name="_method" value="delete" />
           <button type="submit" className="button">
