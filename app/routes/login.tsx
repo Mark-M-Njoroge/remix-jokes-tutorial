@@ -56,9 +56,6 @@ export const action: ActionFunction = async ({ request }) => {
   const loginType: string | null = body.get('loginType') as string | null;
   const redirectTo = validateUrl(body.get('redirectTo') || '/jokes');
 
-  console.log({ redirectTo });
-  console.log({ redirectTo: body.get('redirectTo') });
-
   invariant(username, 'Form not submitted correctly.');
   invariant(password, 'Form not submitted correctly.');
   invariant(loginType, 'Form not submitted correctly.');
