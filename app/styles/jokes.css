@@ -103,6 +103,11 @@
   border-top: 1px solid var(--color-border);
 }
 
+.delete-form {
+  display: block;
+  margin-top: 2rem;
+}
+
 @media print,
 (min-width: 640px) {
   .jokes-header .logo {
