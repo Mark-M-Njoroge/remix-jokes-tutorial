@@ -21,7 +21,10 @@ export default function IndexRoute() {
         <nav>
           <ul>
             <li>
-              <Link to="jokes">Read Jokes</Link>
+              <Link to="jokes">Read Jokes</Link> |{' '}
+              <Link to="/jokes.rss" reloadDocument={true}>
+                RSS Feed
+              </Link>
             </li>
           </ul>
         </nav>

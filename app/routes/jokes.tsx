@@ -83,6 +83,12 @@ export default function JokesRoute() {
           </div>
         </div>
       </main>
+
+      <footer className="jokes-footer">
+        <Link to="/jokes.rss" reloadDocument={true}>
+          RSS Feed
+        </Link>
+      </footer>
     </div>
   );
 }
