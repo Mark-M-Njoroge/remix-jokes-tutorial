@@ -1,7 +1,14 @@
 import type { ActionFunction, LoaderFunction } from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
-import { Form, Link, useActionData, useCatch } from '@remix-run/react';
+import {
+  Form,
+  Link,
+  useActionData,
+  useCatch,
+  useTransition,
+} from '@remix-run/react';
 import invariant from 'tiny-invariant';
+import JokeDisplay from '~/components/JokeDisplay';
 import { db } from '~/utils/db.server';
 import { getUserId, requireUserId } from '~/utils/session.server';
 
@@ -123,6 +130,29 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function NewJokesRoute() {
   const data = useActionData<ActionData>();
+  const transition = useTransition();
+
+  if (transition.submission) {
+    const name = transition.submission.formData.get('name');
+    const content = transition.submission.formData.get('content');
+
+    if (
+      typeof name === 'string' &&
+      typeof content === 'string' &&
+      !validateJokeContentMaxLen(content) &&
+      !validateJokeNameMaxLen(content) &&
+      !validateJokeContentMinLen(content) &&
+      !validateJokeNameMinLen(content)
+    ) {
+      return (
+        <JokeDisplay
+          joke={{ name, content }}
+          isOwner={true}
+          canDelete={false}
+        />
+      );
+    }
+  }
 
   return (
     <section>

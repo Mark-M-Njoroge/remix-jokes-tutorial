@@ -6,19 +6,15 @@ import type {
 } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 import { json } from '@remix-run/node';
-import {
-  Form,
-  Link,
-  useCatch,
-  useLoaderData,
-  useParams,
-} from '@remix-run/react';
+import { useCatch, useLoaderData, useParams } from '@remix-run/react';
+import JokeDisplay from '~/components/JokeDisplay';
 import { db } from '~/utils/db.server';
 import { getUserId, requireUserId } from '~/utils/session.server';
 
 type LoaderData = {
   joke: Joke | null;
   isOwner?: boolean;
+  canDelete?: boolean;
 };
 
 export const meta: MetaFunction = ({
@@ -84,29 +80,16 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   const data = {
     ...foundJoke,
     isOwner: !!userId && !!foundJoke.joke.jokesterId,
+    canDelete: userId && userId === foundJoke.joke.jokesterId ? true : false,
   };
 
   return json(data);
 };
 
 export default function JokeRoute() {
-  const { joke, isOwner } = useLoaderData<LoaderData>();
+  const { joke, isOwner, canDelete } = useLoaderData<LoaderData>();
 
-  return (
-    <div>
-      <h3>Here's your hilarious joke:</h3>
-      <p>{joke!.content}</p>
-      <Link to=".">"{joke!.name}" Permalink</Link>
-      {isOwner && (
-        <Form method="post" className="delete-form">
-          <input type="hidden" name="_method" value="delete" />
-          <button type="submit" className="button">
-            Delete
-          </button>
-        </Form>
-      )}
-    </div>
-  );
+  return <JokeDisplay joke={joke!} isOwner={isOwner!} canDelete={canDelete} />;
 }
 
 export function CatchBoundary() {
