@@ -5,7 +5,7 @@ import {
   LiveReload,
   Meta,
   Outlet,
-  //Scripts,
+  Scripts,
   ScrollRestoration,
   useCatch,
 } from '@remix-run/react';
@@ -63,7 +63,7 @@ function Document({
         {children}
         <LiveReload />
         <ScrollRestoration />
-        {/* <Scripts /> */}
+        <Scripts />
       </body>
     </html>
   );
