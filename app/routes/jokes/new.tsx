@@ -1,6 +1,6 @@
 import type { ActionFunction, LoaderFunction } from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
-import { Link, useActionData, useCatch } from '@remix-run/react';
+import { Form, Link, useActionData, useCatch } from '@remix-run/react';
 import invariant from 'tiny-invariant';
 import { db } from '~/utils/db.server';
 import { getUserId, requireUserId } from '~/utils/session.server';
@@ -127,7 +127,7 @@ export default function NewJokesRoute() {
   return (
     <section>
       <p>Add your own hilarious joke</p>
-      <form method="post">
+      <Form method="post">
         <div>
           <label>
             Name:{' '}
@@ -181,7 +181,7 @@ export default function NewJokesRoute() {
             Add
           </button>
         </div>
-      </form>
+      </Form>
     </section>
   );
 }

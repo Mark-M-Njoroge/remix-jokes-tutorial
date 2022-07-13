@@ -6,7 +6,13 @@ import type {
 } from '@remix-run/node';
 import { redirect } from '@remix-run/node';
 import { json } from '@remix-run/node';
-import { Link, useCatch, useLoaderData, useParams } from '@remix-run/react';
+import {
+  Form,
+  Link,
+  useCatch,
+  useLoaderData,
+  useParams,
+} from '@remix-run/react';
 import { db } from '~/utils/db.server';
 import { getUserId, requireUserId } from '~/utils/session.server';
 
@@ -92,12 +98,12 @@ export default function JokeRoute() {
       <p>{joke!.content}</p>
       <Link to=".">"{joke!.name}" Permalink</Link>
       {isOwner && (
-        <form method="post" className="delete-form">
+        <Form method="post" className="delete-form">
           <input type="hidden" name="_method" value="delete" />
           <button type="submit" className="button">
             Delete
           </button>
-        </form>
+        </Form>
       )}
     </div>
   );

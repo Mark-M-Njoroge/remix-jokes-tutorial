@@ -1,7 +1,7 @@
 // import type { Joke } from '@prisma/client';
 import type { LinksFunction, LoaderFunction } from '@remix-run/node';
 import { json } from '@remix-run/node';
-import { Link, Outlet, useLoaderData } from '@remix-run/react';
+import { Form, Link, Outlet, useLoaderData } from '@remix-run/react';
 import jokesStylesUrl from '~/styles/jokes.css';
 import { db } from '~/utils/db.server';
 import { getUser } from '~/utils/session.server';
@@ -51,11 +51,11 @@ export default function JokesRoute() {
           {user ? (
             <div className="user-info">
               <span>{`Hi ${user.username.split(' ').at(0)}`}</span>
-              <form action="/logout" method="post">
+              <Form action="/logout" method="post">
                 <button type="submit" className="button">
                   Logout
                 </button>
-              </form>
+              </Form>
             </div>
           ) : (
             <Link to="/login">Login</Link>
