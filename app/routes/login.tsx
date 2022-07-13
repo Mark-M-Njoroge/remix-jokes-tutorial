@@ -1,10 +1,19 @@
-import type { ActionFunction, LinksFunction } from '@remix-run/node';
+import type {
+  ActionFunction,
+  LinksFunction,
+  MetaFunction,
+} from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { Link, useActionData, useSearchParams } from '@remix-run/react';
 import invariant from 'tiny-invariant';
 import loginStylesUrl from '~/styles/login.css';
 import { db } from '~/utils/db.server';
 import { createUserSession, login, register } from '~/utils/session.server';
+
+export const meta: MetaFunction = () => ({
+  title: 'Remix Jokes | Login',
+  description: 'Login to submit your own jokes to Remix Jokes!',
+});
 
 export const links: LinksFunction = () => {
   return [{ rel: 'stylesheet', href: loginStylesUrl }];
